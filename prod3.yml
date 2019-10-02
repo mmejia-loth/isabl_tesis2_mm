@@ -1,0 +1,107 @@
+version: '3'
+
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+  production_caddy: {}
+
+services:
+  django: &django
+    image: 404332397563.dkr.ecr.us-east-2.amazonaws.com/isabl_tesis2_production_django
+    links:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    volumes:
+      - /home/ec2-user/isabl_tesis2:/app
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: logs_cluster
+        awslogs-region: us-east-2
+        awslogs-stream-prefix: django
+    command: /start
+
+  postgres:
+    image: 404332397563.dkr.ecr.us-east-2.amazonaws.com/isabl_tesis2_production_postgres
+    volumes:
+      - /home/ec2-user/data:/var/lib/postgresql/data
+      - /home/ec2-user/backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+    ports:
+      - "0.0.0.0:5432:5432"
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: logs_cluster
+        awslogs-region: us-east-2
+        awslogs-stream-prefix: postgres
+
+  caddy:
+    image: 404332397563.dkr.ecr.us-east-2.amazonaws.com/isabl_tesis2_production_caddy
+    links:
+      - django
+    volumes:
+      - /home/ec2-user/caddy:/root/.caddy
+      - ./isabl_tesis2:/var/www/html
+    env_file:
+      - ./.envs/.production/.caddy
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+      - "0.0.0.0:2015:2015"
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: logs_cluster
+        awslogs-region: us-east-2
+        awslogs-stream-prefix: caddy
+
+  redis:
+    image: 404332397563.dkr.ecr.us-east-2.amazonaws.com/redis:3.2
+    ports:
+      - "0.0.0.0:6379:6379"
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: logs_cluster
+        awslogs-region: us-east-2
+        awslogs-stream-prefix: redis
+
+  celeryworker:
+    <<: *django
+    image: 404332397563.dkr.ecr.us-east-2.amazonaws.com/isabl_tesis2_production_celeryworker
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: logs_cluster
+        awslogs-region: us-east-2
+        awslogs-stream-prefix: celeryworker
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: 404332397563.dkr.ecr.us-east-2.amazonaws.com/isabl_tesis2_production_celerybeat
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: logs_cluster
+        awslogs-region: us-east-2
+        awslogs-stream-prefix: celerybeat
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: 404332397563.dkr.ecr.us-east-2.amazonaws.com/isabl_tesis2_production_flower
+    ports:
+      - "0.0.0.0:5555:5555"
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: logs_cluster
+        awslogs-region: us-east-2
+        awslogs-stream-prefix: flower
+    command: /start-flower

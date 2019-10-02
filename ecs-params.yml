@@ -1,0 +1,19 @@
+version: '3'
+task_definition:
+  services:
+    django:
+      mem_limit: 1024Mi
+    postgres:
+      mem_limit: 512Mi
+    redis:
+      mem_limit: 400Mi
+    celeryworker:
+      mem_limit: 512Mi
+    celerybeat:
+      mem_limit: 512Mi
+    flower:
+      mem_limit: 400Mi
+    caddy:
+      mem_limit: 400Mi
+  ecs_network_mode: bridge
+

@@ -1,0 +1,5 @@
+{
+	"domain": "isabldemo.hopto.org",
+	"certUrl": "https://acme-v02.api.letsencrypt.org/acme/cert/03b3e42dc98686f9bef151d8414a39b2a1b6",
+	"certStableUrl": "https://acme-v02.api.letsencrypt.org/acme/cert/03b3e42dc98686f9bef151d8414a39b2a1b6"
+}

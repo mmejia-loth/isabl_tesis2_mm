@@ -1,0 +1,19 @@
+language: python
+
+python:
+  - "3.6"
+
+services:
+  - docker
+
+install:
+  - pip install -U codecov coverage django_coverage_plugin
+
+script:
+  - docker-compose -f local.yml build
+  - docker-compose -f local.yml run --rm django py.test --cov=isabl_tesis2
+
+after_success:
+  - mv .coverage .coverage.tmp
+  - coverage combine
+  - codecov

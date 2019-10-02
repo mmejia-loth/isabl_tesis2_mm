@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet" type="text/css">
+  <title>Isabel</title>
+  {% load static %}
+  <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but isabl doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+  </noscript>
+
+  <div id="isabl-web"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/isabl-web"></script>
+  <script>
+    window.$isabl = {
+      apiHost: '' // In production add your host here "http://my.api.host"
+    }
+</script>
+</body>
+
+</html>
+

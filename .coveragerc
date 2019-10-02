@@ -1,0 +1,6 @@
+[paths]
+source = isabl_tesis2/, */isabl_tesis2
+
+[run]
+include = isabl_tesis2/*
+omit = *migrations*, *tests*

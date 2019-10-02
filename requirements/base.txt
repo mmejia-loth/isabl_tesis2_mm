@@ -1,0 +1,22 @@
+# Base Requirements
+# ------------------------------------------------------------------------------
+pytz==2018.5  # https://github.com/stub42/pytz
+python-slugify==1.2.6  # https://github.com/un33k/python-slugify
+Pillow==5.2.0  # https://github.com/python-pillow/Pillow
+argon2-cffi==18.3.0  # https://github.com/hynek/argon2_cffi
+whitenoise==4.0  # https://github.com/evansd/whitenoise
+redis==2.10.5  # https://github.com/antirez/redis
+kombu==4.2.0  # see issue https://github.com/celery/celery/issues/5369
+celery==4.2.1  # pyup: <5.0  # https://github.com/celery/celery
+flower==0.9.2  # https://github.com/mher/flower
+tornado==4.5.3  # we need to fix this version due to: https://github.com/conda-forge/nbconvert-feedstock/issues/27
+django-extensions==2.1.2  # https://github.com/django-extensions/django-extensions
+
+# Django Requirements
+# ------------------------------------------------------------------------------
+-e ./requirements/isabl_api
+django-environ==0.4.5  # https://github.com/joke2k/django-environ
+django-crispy-forms==1.7.2  # https://github.com/django-crispy-forms/django-crispy-forms
+django-redis==4.9.0  # https://github.com/niwinz/django-redis
+django-celery-beat==1.1.1  # https://github.com/celery/django-celery-beat
+django-celery-results==1.0.1  #https://github.com/celery/django-celery-results

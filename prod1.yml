@@ -1,0 +1,70 @@
+version: '3'
+
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+  production_caddy: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: isabl_tesis2_production_django
+    links:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    volumes:
+      - /home/ec2-user/isabl_tesis2:/app
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: isabl_tesis2_production_postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+
+  caddy:
+    build:
+      context: .
+      dockerfile: ./compose/production/caddy/Dockerfile
+    image: isabl_tesis2_production_caddy
+    links:
+      - django
+    volumes:
+      - production_caddy:/root/.caddy
+      - ./isabl_tesis2:/var/www/html
+    env_file:
+      - ./.envs/.production/.caddy
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+      - "0.0.0.0:2015:2015"
+
+  redis:
+    image: redis:3.2
+
+  celeryworker:
+    <<: *django
+    image: isabl_tesis2_production_celeryworker
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: isabl_tesis2_production_celerybeat
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: isabl_tesis2_production_flower
+    ports:
+      - "0.0.0.0:5555:5555"
+    command: /start-flower
